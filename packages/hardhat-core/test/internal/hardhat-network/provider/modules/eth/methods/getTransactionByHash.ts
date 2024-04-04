@@ -169,7 +169,7 @@ describe("Eth module", function () {
             this.provider,
             {
               from: bufferToHex(txParams.from),
-              data: bufferToHex(txParams.data),
+              data: bufferToHex(txParams.data !== undefined ? txParams.data : txParams.input!),
               nonce: numberToRpcQuantity(txParams.nonce),
               value: numberToRpcQuantity(txParams.value),
               gas: numberToRpcQuantity(txParams.gasLimit),
