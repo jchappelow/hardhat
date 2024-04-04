@@ -20,6 +20,10 @@ import { RpcAccessList } from "../../../core/jsonrpc/types/access-list";
 
 /* eslint-disable @nomicfoundation/hardhat-internal-rules/only-hardhat-error */
 
+function toBuffer(x: Parameters<typeof toBytes>[0]) {
+  return Buffer.from(toBytes(x));
+}
+
 export class Base {
   constructor(protected readonly _node: HardhatNode) {}
 
@@ -88,13 +92,22 @@ export class Base {
   public async rpcCallRequestToNodeCallParams(
     rpcCall: RpcCallRequest
   ): Promise<CallParams> {
+    let data: Buffer;
+    if (rpcCall.input !== undefined) {
+      data = rpcCall.input;
+    } else if (rpcCall.data !== undefined) {
+      data = rpcCall.data;
+    } else {
+      data = toBuffer([]);
+    }
+
     return {
       to: rpcCall.to,
       from:
         rpcCall.from !== undefined
           ? rpcCall.from
           : await this._getDefaultCallFrom(),
-      data: rpcCall.data !== undefined ? rpcCall.data : Buffer.from([]),
+      data: data,
       gasLimit:
         rpcCall.gas !== undefined ? rpcCall.gas : this._node.getBlockGasLimit(),
       value: rpcCall.value !== undefined ? rpcCall.value : 0n,

@@ -93,6 +93,10 @@ const ACCESS_LIST_MIN_HARDFORK = HardforkName.BERLIN;
 const EIP155_MIN_HARDFORK = HardforkName.SPURIOUS_DRAGON;
 const EIP3860_MIN_HARDFORK = HardforkName.SHANGHAI;
 
+function toBuffer(x: Parameters<typeof toBytes>[0]) {
+  return Buffer.from(toBytes(x));
+}
+
 /* eslint-disable @nomicfoundation/hardhat-internal-rules/only-hardhat-error */
 export class EthModule extends Base {
   constructor(
@@ -1269,13 +1273,20 @@ export class EthModule extends Base {
   private async _rpcTransactionRequestToNodeTransactionParams(
     rpcTx: RpcTransactionRequest
   ): Promise<TransactionParams> {
+    let data: Buffer = toBuffer([]);
+    if (rpcTx.input !== undefined) {
+      data = rpcTx.input;
+    } else if (rpcTx.data !== undefined) {
+      data = rpcTx.data;
+    }
+
     const baseParams = {
       to: rpcTx.to,
       from: rpcTx.from,
       gasLimit:
         rpcTx.gas !== undefined ? rpcTx.gas : this._node.getBlockGasLimit(),
       value: rpcTx.value !== undefined ? rpcTx.value : 0n,
-      data: rpcTx.data !== undefined ? rpcTx.data : toBytes([]),
+      data,
       nonce:
         rpcTx.nonce !== undefined
           ? rpcTx.nonce

@@ -90,7 +90,8 @@ interface BaseTransactionParams {
   from: Uint8Array;
   gasLimit: bigint;
   value: bigint;
-  data: Uint8Array;
+  data?: Uint8Array;
+  input?: Uint8Array;
   nonce: bigint;
 }
 
