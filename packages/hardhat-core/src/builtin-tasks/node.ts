@@ -238,7 +238,7 @@ subtask(TASK_NODE_SERVER_READY)
     ) => {
       console.log(
         chalk.green(
-          `[eth_call input] Started HTTP and WebSocket JSON-RPC server at http://${address}:${port}/`
+          `[eth_call input2] Started HTTP and WebSocket JSON-RPC server at http://${address}:${port}/`
         )
       );
 
